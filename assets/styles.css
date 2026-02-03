@@ -1,44 +1,432 @@
-/* AI-Accelerated Venture Lab Styles */
+/* assets/styles.css
+   Ivey-aligned theme tokens + accessible layout styles
+   Based on Ivey Standards Manual colours and web-safe typography guidance.
+*/
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* ------------------------------
+   Design tokens
+--------------------------------- */
+:root{
+  /* Ivey brand colours (primary + secondary) */
+  --ivey-green: #034638;   /* Ivey Green (Hex) */
+  --ivey-purple: #582C83;  /* Purple (Hex) */
+
+  /* Core neutrals (web use) */
+  --black: #000000;
+  --grey: #63666A;
+  --white: #ffffff;
+
+  /* UI neutrals (derived) */
+  --bg: var(--white);
+  --surface: #f6f7f9;      /* light neutral surface */
+  --surface-2: #eef1f4;    /* slightly deeper surface */
+  --text: #121417;         /* readable body text */
+  --muted: var(--grey);
+  --border: #d1d5db;
+
+  /* Links/focus use brand green (safe + on-brand) */
+  --link: var(--ivey-green);
+  --focus: var(--ivey-green);
+
+  /* Layout */
+  --maxw: 980px;
+  --radius: 14px;
+
+  /* Shadows */
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 10px 28px rgba(0,0,0,.08);
+  --shadow-soft: 0 1px 2px rgba(0,0,0,.05);
+
+  /* Type scale */
+  --text-base: 1rem;
+  --text-sm: .95rem;
+  --text-xs: .88rem;
+
+  /* Spacing */
+  --pad-x: 18px;
+  --gap: 16px;
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    line-height: 1.6;
-    color: #333;
+/* High contrast mode
+   (keeps brand identity but prioritizes legibility) */
+html[data-contrast="high"]{
+  --bg: #000000;
+  --surface: #0b0b0b;
+  --surface-2: #141414;
+  --text: #ffffff;
+  --muted: #e5e7eb;
+  --border: #ffffff;
+
+  /* Links/focus become lighter for contrast */
+  --link: #7dd3fc;
+  --focus: #7dd3fc;
+
+  --shadow: none;
+  --shadow-soft: none;
 }
 
-header {
-    background: #1a1a2e;
-    padding: 1rem;
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
-nav {
-    display: flex;
-    gap: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
+/* ------------------------------
+   Base
+--------------------------------- */
+*{ box-sizing: border-box; }
+html, body{ height: 100%; }
+
+body{
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: 1.55;
+
+  /* Web-safe typography guidance:
+     Benton Sans/Walbaum are primary, but Arial/Georgia are approved alternatives.
+     We'll use Arial for body; Georgia for headings. */
+  font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+
+  background: var(--bg);
+  color: var(--text);
 }
 
-nav a {
-    color: #fff;
-    text-decoration: none;
+a{
+  color: var(--link);
+  text-underline-offset: .18em;
+}
+a:hover{ text-decoration-thickness: 2px; }
+
+a:focus-visible,
+button:focus-visible{
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 10px;
 }
 
-nav a:hover {
-    text-decoration: underline;
+/* Skip link */
+.skip-link{
+  position: absolute;
+  left: -999px;
+  top: 0;
+  padding: .7rem 1rem;
+  background: var(--bg);
+  color: var(--text);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  z-index: 9999;
+}
+.skip-link:focus{
+  left: 12px;
+  top: 12px;
 }
 
-main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+/* ------------------------------
+   Layout helpers
+--------------------------------- */
+.container{
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
 }
 
-h1 {
-    margin-bottom: 1rem;
+/* ------------------------------
+   Header / Nav
+--------------------------------- */
+header{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  /* Ivey-flavoured top rule */
+  border-top: 6px solid var(--ivey-green);
+
+  /* Subtle sticky treatment */
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+.brand{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 220px;
+}
+.brand a{
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+.brand small{
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+nav ul{
+  list-style: none;
+  display: flex;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+nav a{
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: var(--text);
+  border: 1px solid transparent;
+}
+nav a:hover{
+  background: var(--surface);
+  border-color: var(--border);
+}
+nav a[aria-current="page"]{
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+/* Right-side controls */
+.controls{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ------------------------------
+   Buttons
+--------------------------------- */
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+
+  border-radius: 12px;
+  padding: 9px 12px;
+
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  line-height: 1.2;
+}
+
+.btn:hover{
+  background: var(--surface);
+}
+
+.btn.primary{
+  background: var(--ivey-green);
+  color: #ffffff;
+  border-color: var(--ivey-green);
+}
+
+.btn.primary:hover{
+  filter: brightness(0.95);
+}
+
+/* High contrast primary button treatment */
+html[data-contrast="high"] .btn.primary{
+  background: var(--link);
+  color: #000000;
+  border-color: var(--link);
+}
+
+/* ------------------------------
+   Typography
+--------------------------------- */
+h1, h2, h3{
+  font-family: Georgia, serif;
+  letter-spacing: .1px;
+}
+
+h1{
+  margin: 10px 0 8px;
+  font-size: clamp(1.85rem, 2.7vw, 2.55rem);
+  line-height: 1.15;
+}
+
+h2{
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+h3{
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  line-height: 1.25;
+}
+
+/* ------------------------------
+   Main / Hero
+--------------------------------- */
+main{
+  padding: 28px 0 40px;
+}
+
+.hero{
+  padding: 26px 0 8px;
+}
+
+.kicker{
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: .2px;
+  font-size: var(--text-sm);
+  margin: 10px 0 6px;
+}
+
+.lede{
+  margin: 0;
+  font-size: 1.06rem;
+  color: var(--muted);
+  max-width: 72ch;
+}
+
+.hero-actions{
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* ------------------------------
+   Cards / Grid
+--------------------------------- */
+.grid{
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gap);
+  margin-top: 22px;
+}
+
+.card{
+  grid-column: span 12;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.card p{
+  margin: 10px 0;
+  color: var(--text);
+}
+
+.card .muted{
+  color: var(--muted);
+}
+
+/* Optional: a slightly more formal "panel" look */
+.card.panel{
+  background: var(--bg);
+}
+
+@media (min-width: 860px){
+  .span-7{ grid-column: span 7; }
+  .span-5{ grid-column: span 5; }
+  .span-6{ grid-column: span 6; }
+}
+
+/* Lists */
+.list{
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+.list li{ margin: 6px 0; }
+
+/* Separator */
+hr.sep{
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 22px 0;
+}
+
+/* ------------------------------
+   Badges
+--------------------------------- */
+.badge{
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+/* A subtle "status dot" that reads well in both modes */
+.badge span[aria-hidden="true"]{
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  border-radius: 50%;
+  background: var(--ivey-green);
+}
+html[data-contrast="high"] .badge span[aria-hidden="true"]{
+  background: var(--link);
+}
+
+/* ------------------------------
+   Footer
+--------------------------------- */
+.footer{
+  border-top: 1px solid var(--border);
+  padding: 18px 0 28px;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+.footer a{ color: var(--muted); }
+
+/* ------------------------------
+   Tables (future-proofing)
+--------------------------------- */
+table{
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0 0;
+  font-size: var(--text-sm);
+}
+th, td{
+  border: 1px solid var(--border);
+  padding: 10px;
+  vertical-align: top;
+}
+th{
+  text-align: left;
+  background: var(--surface-2);
+  font-weight: 700;
+}
+
+/* ------------------------------
+   Small screens tweaks
+--------------------------------- */
+@media (max-width: 640px){
+  .brand{ min-width: auto; }
+  nav ul{ gap: 6px; }
+  nav a{ padding: 8px 9px; }
 }
